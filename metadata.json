@@ -1,0 +1,6 @@
+{
+  "name": "Christmas Wishes 2026",
+  "description": "A festive community holiday sanctuary where you can share, discover, and celebrate heartfelt Christmas wishes for 2026.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

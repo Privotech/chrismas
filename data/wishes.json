@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "id": "wish-2026-1",
+    "name": "The Henderson Family",
+    "message": "May your home be blessed with warm fires, joyous laughter, and the quiet peace of snow falling outside. Merry Christmas 2026 to friends and neighbors near and far!",
+    "category": "family",
+    "theme": "pine",
+    "createdAt": "2026-10-25T14:20:00.000Z",
+    "reactions": {
+      "warmth": 25,
+      "cheer": 18,
+      "star": 31,
+      "hug": 12
+    }
+  },
+  {
+    "id": "wish-2026-2",
+    "name": "Maya & Lucas",
+    "message": "Wishing calm minds and joyful hearts for everyone who worked hard this year. Here's to cozy sweaters, warm cocoa, and gentle winter nights.",
+    "category": "peace",
+    "theme": "gold",
+    "createdAt": "2026-10-26T08:15:00.000Z",
+    "reactions": {
+      "warmth": 19,
+      "cheer": 14,
+      "star": 22,
+      "hug": 8
+    }
+  },
+  {
+    "id": "wish-2026-3",
+    "name": "Grandma Rose",
+    "message": "Sending handmade gingerbread warmth and heartfelt hugs to anyone missing a loved one this Christmas. You are remembered, loved, and never alone.",
+    "category": "gratitude",
+    "theme": "crimson",
+    "createdAt": "2026-10-26T09:30:00.000Z",
+    "reactions": {
+      "warmth": 42,
+      "cheer": 27,
+      "star": 35,
+      "hug": 29
+    }
+  },
+  {
+    "id": "wish-2026-4",
+    "name": "Aiden Cole",
+    "message": "Here is to new beginnings in 2027, big dreams taking flight, and cherishing every small moment of wonder right now. Happy Holidays!",
+    "category": "dreams",
+    "theme": "starlight",
+    "createdAt": "2026-10-26T09:45:00.000Z",
+    "reactions": {
+      "warmth": 15,
+      "cheer": 21,
+      "star": 18,
+      "hug": 6
+    }
+  }
+]

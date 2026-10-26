@@ -1,6 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import WishMaker from "./components/WishMaker";
 import WishOthers from "./components/WishOthers";
+import VirtualTree from "./components/VirtualTree";
 import Home from "./components/home.jsx";
 import Layout from "./components/Layout.jsx";
 
@@ -11,6 +12,8 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="make" element={<WishMaker />} />
         <Route path="wish-others" element={<WishOthers />} />
+        <Route path="tree" element={<VirtualTree />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   );

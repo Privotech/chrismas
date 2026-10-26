@@ -1,99 +1,83 @@
-:root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html,
-  body,
-  #root {
-    height: 100%;
+  html {
+    scroll-behavior: smooth;
   }
   body {
-    @apply bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-slate-100 font-sans;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-[#06110e] text-slate-100 font-sans selection:bg-crimson-600 selection:text-white;
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(200, 30, 46, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 30%, rgba(212, 175, 55, 0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 15% 70%, rgba(14, 148, 92, 0.1) 0%, transparent 50%);
+    background-attachment: fixed;
     margin: 0;
   }
-  a {
-    @apply text-christmas-100 hover:text-christmas-300 font-medium;
-  }
 }
 
-/* small custom helpers */
-.container {
-  /* Wider layout container with responsive breakpoints */
-  @apply max-w-4xl mx-auto px-6;
+.glass-card {
+  @apply bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl transition-all duration-300;
 }
 
-@screen md {
-  .container {
-    @apply max-w-6xl;
-  }
-}
-@screen lg {
-  .container {
-    @apply max-w-7xl;
-  }
-}
-@screen xl {
-  .container {
-    @apply max-w-screen-xl;
-  }
-}
-.card {
-  @apply bg-slate-600/60 border border-slate-700 rounded-2xl p-6 shadow-lg;
+.glass-card-hover {
+  @apply hover:border-white/20 hover:bg-slate-900/75 hover:shadow-2xl hover:-translate-y-0.5;
 }
 
-/* Snowflake / snowball animation */
-.snowfall {
+/* Snowflake styling */
+.snowfall-layer {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 30;
   overflow: hidden;
 }
-.snowflake {
+
+.snowflake-item {
   position: absolute;
-  top: -10vh;
+  top: -6vh;
   color: white;
-  opacity: 0.9;
   will-change: transform, opacity;
-  animation: fall linear infinite;
+  animation: snowfall-fall linear infinite;
 }
-@keyframes fall {
+
+@keyframes snowfall-fall {
   0% {
-    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    transform: translateY(-8vh) translateX(0) rotate(0deg);
     opacity: 0;
   }
-  10% {
-    opacity: 0.9;
+  15% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
   }
   100% {
-    transform: translateY(110vh) translateX(30vw) rotate(360deg);
-    opacity: 0.9;
+    transform: translateY(108vh) translateX(25vw) rotate(360deg);
+    opacity: 0;
   }
 }
 
-/* small sway for variety */
-.sway {
-  animation-name: fall, swayx;
-  animation-duration: var(--d, 10s), var(--dx, 4s);
-  animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite;
+.gold-glow {
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
-@keyframes swayx {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(30px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+
+.crimson-glow {
+  box-shadow: 0 10px 30px -10px rgba(230, 57, 70, 0.4);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #040d0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #194437;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #235e4d;
 }

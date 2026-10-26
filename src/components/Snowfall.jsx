@@ -1,39 +1,44 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-export default function Snowfall({ count = 20 }) {
-  const [flakes, setFlakes] = useState([]);
+function getSeededRandom(seed) {
+  const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
 
-  useEffect(() => {
-    const arr = Array.from({ length: count }).map((_, i) => {
-      const left = Math.random() * 100;
-      const size = 8 + Math.random() * 28;
-      const delay = Math.random() * -20;
-      const duration = 8 + Math.random() * 12;
-      return { id: i, left, size, delay, duration };
+export default function Snowfall({ density = "gentle" }) {
+  const count = density === "blizzard" ? 40 : density === "gentle" ? 22 : 0;
+
+  const flakes = useMemo(() => {
+    return Array.from({ length: count }).map((_, i) => {
+      const left = getSeededRandom(i * 5 + 1) * 100;
+      const size = 3 + getSeededRandom(i * 5 + 2) * 5; // 3px to 8px soft crystalline flakes
+      const opacity = 0.35 + getSeededRandom(i * 5 + 3) * 0.55;
+      const delay = getSeededRandom(i * 5 + 4) * -25;
+      const duration = 9 + getSeededRandom(i * 5 + 5) * 12;
+      return { id: i, left, size, opacity, delay, duration };
     });
-    setFlakes(arr);
   }, [count]);
 
+  if (count === 0) return null;
+
   return (
-    <div className="snowfall" aria-hidden>
+    <div className="snowfall-layer" aria-hidden="true">
       {flakes.map((f) => (
-        <svg
+        <div
           key={f.id}
-          className="snowflake sway"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+          className="snowflake-item"
           style={{
             left: `${f.left}%`,
             width: `${f.size}px`,
             height: `${f.size}px`,
+            opacity: f.opacity,
             animationDuration: `${f.duration}s`,
             animationDelay: `${f.delay}s`,
-            zIndex: 40,
-            position: "absolute",
+            borderRadius: "50%",
+            backgroundColor: "white",
+            boxShadow: "0 0 6px 1px rgba(255, 255, 255, 0.4)",
           }}
-        >
-          <circle cx="12" cy="12" r="6" fill="white" opacity="0.95" />
-        </svg>
+        />
       ))}
     </div>
   );
