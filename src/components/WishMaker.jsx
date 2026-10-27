@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, Send, CheckCircle2, Wand2, ArrowRight } from "lucide-react";
+import { Sparkles, Send, CheckCircle2, Wand2, ArrowRight, Download } from "lucide-react";
 import { WISH_CATEGORIES, CARD_THEMES, FESTIVE_PROMPTS, fireHolidayConfetti, formatWishTime } from "../utils/holidayUtils";
 import { holidayAudio } from "../utils/holidayAudio";
+import { downloadHolidayCard } from "../utils/cardExporter";
 
 export default function WishMaker() {
   const [name, setName] = useState("");
@@ -86,6 +87,17 @@ export default function WishMaker() {
     setCreatedWish(null);
   }
 
+  function handleDownloadCurrent() {
+    const wishData = createdWish || {
+      name: name.trim() || "Anonymous Friend",
+      message: message.trim() || "May your Christmas 2026 be wrapped in love, laughter, and holiday warmth.",
+      category,
+      theme: themeId,
+    };
+    downloadHolidayCard(wishData);
+    holidayAudio.playSparkle();
+  }
+
   return (
     <div className="space-y-10 max-w-5xl mx-auto">
       {/* Header */}
@@ -98,7 +110,7 @@ export default function WishMaker() {
           Make a Christmas Wish
         </h1>
         <p className="text-sm sm:text-base text-slate-300">
-          Pen a heartfelt holiday message to warm hearts across our global community. Choose your festive card style and see it come to life.
+          Pen a heartfelt holiday message to warm hearts across our global community. Choose your festive card style and download as a digital keepsake card.
         </p>
       </div>
 
@@ -117,6 +129,14 @@ export default function WishMaker() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              type="button"
+              onClick={handleDownloadCurrent}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-semibold text-sm rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download Holiday Card (PNG)</span>
+            </button>
             <Link
               to="/wish-others"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-crimson-600 to-crimson-700 hover:from-crimson-500 hover:to-crimson-600 text-white font-medium text-sm rounded-xl shadow-lg transition-transform hover:-translate-y-0.5"
@@ -263,9 +283,20 @@ export default function WishMaker() {
 
           {/* Live Card Preview (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Real-Time Holiday Card Preview</span>
+            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Real-Time Holiday Card Preview</span>
+              </span>
+              <button
+                type="button"
+                onClick={handleDownloadCurrent}
+                className="text-amber-300 hover:text-amber-200 flex items-center gap-1 font-medium capitalize"
+                title="Download this preview as card"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Save Card</span>
+              </button>
             </div>
 
             <div

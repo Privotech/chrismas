@@ -1,13 +1,39 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowRight, Heart, Star, Plus } from "lucide-react";
-import { getChristmasCountdown, CARD_THEMES, formatWishTime } from "../utils/holidayUtils";
+import { Sparkles, ArrowRight, Plus, Gift, Sparkle } from "lucide-react";
+import { getChristmasCountdown, fireHolidayConfetti } from "../utils/holidayUtils";
 import { holidayAudio } from "../utils/holidayAudio";
+import WishesGrid from "./WishesGrid";
+
+const DAILY_BLESSINGS = [
+  {
+    theme: "Kindness in Winter",
+    message: "Reach out to someone who might be celebrating alone this year. A two-minute message can light up their entire holiday season.",
+    tag: "Day of Warmth",
+  },
+  {
+    theme: "Quiet Gratitude",
+    message: "Take ten peaceful minutes tonight by candlelight to thank yourself for the courage and quiet resilience you showed throughout 2026.",
+    tag: "Day of Peace",
+  },
+  {
+    theme: "The Magic of Giving",
+    message: "Secretly do something kind today—leave a holiday note, tip extra generously, or pay for someone's hot cocoa behind you.",
+    tag: "Day of Cheer",
+  },
+  {
+    theme: "Forgiveness & Renewal",
+    message: "Let go of an old grudge or unspoken hurt. Make space in your heart for the joy and fresh beginnings arriving in 2027.",
+    tag: "Day of Hope",
+  },
+];
 
 export default function Home() {
   const [countdown, setCountdown] = useState(getChristmasCountdown());
   const [recentWishes, setRecentWishes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [giftOpened, setGiftOpened] = useState(false);
+  const [blessingIndex, setBlessingIndex] = useState(0);
 
   // Countdown timer effect
   useEffect(() => {
@@ -72,6 +98,13 @@ export default function Home() {
     } catch {
       // ignore
     }
+  }
+
+  function handleOpenGift() {
+    setGiftOpened(true);
+    setBlessingIndex((prev) => (prev + 1) % DAILY_BLESSINGS.length);
+    holidayAudio.playSparkle();
+    fireHolidayConfetti();
   }
 
   return (
@@ -171,6 +204,66 @@ export default function Home() {
               </span>
               <span className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider mt-1">Secs</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Holiday Gift of Kindness */}
+      <section className="glass-card bg-gradient-to-br from-[#1d1204] via-[#0d1f18] to-[#1a080c] border-amber-600/30 p-8 sm:p-10 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+          {/* Animated Present Icon */}
+          <button
+            type="button"
+            onClick={handleOpenGift}
+            className="group relative p-6 rounded-3xl bg-amber-500/10 border border-amber-400/40 hover:bg-amber-500/20 hover:scale-105 transition-all duration-300 cursor-pointer shadow-xl shadow-amber-950/40"
+            title="Click to unwrap today's holiday blessing"
+          >
+            <div className="text-5xl group-hover:rotate-12 transition-transform duration-300">
+              🎁
+            </div>
+            <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full whitespace-nowrap shadow">
+              {giftOpened ? "Unwrap Next" : "Tap to Open"}
+            </span>
+          </button>
+
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300">
+              <Gift className="w-3.5 h-3.5" />
+              <span>Daily Holiday Gift of Kindness</span>
+            </div>
+
+            {giftOpened ? (
+              <div className="space-y-2 animate-in fade-in zoom-in-95 duration-300">
+                <span className="text-xs font-mono text-emerald-400 font-medium">
+                  {DAILY_BLESSINGS[blessingIndex].tag}
+                </span>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                  "{DAILY_BLESSINGS[blessingIndex].theme}"
+                </h3>
+                <p className="text-sm text-slate-200 italic leading-relaxed bg-black/30 p-4 rounded-xl border border-white/5">
+                  {DAILY_BLESSINGS[blessingIndex].message}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                  A Gentle Winter Blessing Awaits
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Unwrap a daily inspirational thought, quiet challenge, or festive reminder crafted to bring peace to your day.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleOpenGift}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 underline cursor-pointer"
+                  >
+                    <Sparkle className="w-3 h-3" />
+                    <span>Unwrap Today's Blessing</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -283,7 +376,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recent Wishes Showcase */}
+      {/* Recent Wishes Showcase using .glass-card WishesGrid */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -299,57 +392,11 @@ export default function Home() {
           </Link>
         </div>
 
-        {loading ? (
-          <div className="py-12 text-center text-slate-400 text-xs">Loading holiday messages…</div>
-        ) : recentWishes.length === 0 ? (
-          <div className="glass-card text-center py-10 text-slate-400 text-xs">
-            No wishes yet. Be the first to share one!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {recentWishes.map((w) => {
-              const theme = CARD_THEMES.find((t) => t.id === w.theme) || CARD_THEMES[0];
-              return (
-                <div
-                  key={w.id}
-                  className={`rounded-2xl border p-6 bg-gradient-to-br ${theme.bgClass} flex flex-col justify-between shadow-lg relative overflow-hidden transition-all duration-300 hover:-translate-y-1`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
-                      <span className="font-semibold text-white">{w.name || "Anonymous Friend"}</span>
-                      <span className="text-[11px] font-mono">{formatWishTime(w.createdAt || w.timestamp)}</span>
-                    </div>
-                    <blockquote className="font-display text-sm sm:text-base text-slate-200 italic leading-relaxed mb-4">
-                      "{w.message}"
-                    </blockquote>
-                  </div>
-
-                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                    <button
-                      type="button"
-                      onClick={() => handleReact(w.id, "warmth")}
-                      className="flex items-center gap-1.5 text-slate-300 hover:text-rose-400 transition-colors"
-                    >
-                      <Heart className="w-3.5 h-3.5 text-rose-400" />
-                      <span className="font-mono text-[11px] tabular-nums">{w.reactions?.warmth || 1}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleReact(w.id, "star")}
-                      className="flex items-center gap-1.5 text-slate-300 hover:text-amber-300 transition-colors"
-                    >
-                      <Star className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="font-mono text-[11px] tabular-nums">{w.reactions?.star || 1}</span>
-                    </button>
-                    <Link to="/wish-others" className="text-amber-300 hover:underline text-[11px]">
-                      Read More
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <WishesGrid
+          wishes={recentWishes}
+          loading={loading}
+          onReact={handleReact}
+        />
       </section>
     </div>
   );

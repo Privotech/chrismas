@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, Heart, Star, Share2, Search, Plus, Check } from "lucide-react";
-import { WISH_CATEGORIES, CARD_THEMES, formatWishTime } from "../utils/holidayUtils";
+import { Sparkles, Search, Plus } from "lucide-react";
+import { WISH_CATEGORIES } from "../utils/holidayUtils";
 import { holidayAudio } from "../utils/holidayAudio";
+import WishesGrid from "./WishesGrid";
 
 export default function WishOthers() {
   const [wishes, setWishes] = useState([]);
@@ -10,7 +11,6 @@ export default function WishOthers() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest"); // newest | reactions | oldest
-  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -82,15 +82,6 @@ export default function WishOthers() {
     }
   }
 
-  function handleShare(wish) {
-    const textToCopy = `"${wish.message}" — ${wish.name || "Anonymous"} (Christmas Wishes 2026)`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(textToCopy);
-      setCopiedId(wish.id);
-      setTimeout(() => setCopiedId(null), 2000);
-    }
-  }
-
   const filteredWishes = useMemo(() => {
     let list = [...wishes];
 
@@ -135,7 +126,7 @@ export default function WishOthers() {
             Wishes from Around the World
           </h1>
           <p className="text-sm text-slate-300 max-w-xl">
-            Explore prayers, hopes, and joyful greetings penned by people everywhere. Send warmth, light a star, or add your own wish.
+            Explore prayers, hopes, and joyful greetings penned by people everywhere. Send warmth, download cards as keepsakes, or add your own wish.
           </p>
         </div>
 
@@ -193,123 +184,12 @@ export default function WishOthers() {
         </div>
       </div>
 
-      {/* Wishes Grid */}
-      {loading ? (
-        <div className="py-24 text-center text-slate-400 text-sm">
-          Lighting holiday candles and gathering wishes...
-        </div>
-      ) : filteredWishes.length === 0 ? (
-        <div className="glass-card text-center py-16 space-y-4">
-          <div className="text-4xl">🎄</div>
-          <h3 className="font-display text-xl font-bold text-white">No Wishes Found</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            {searchQuery
-              ? `No wishes matching "${searchQuery}". Try a different keyword.`
-              : "No wishes in this category yet. Be the first to share one!"}
-          </p>
-          <Link
-            to="/make"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-crimson-600 hover:bg-crimson-500 text-white text-xs font-semibold rounded-lg shadow transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Make a Christmas Wish</span>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredWishes.map((w) => {
-            const theme = CARD_THEMES.find((t) => t.id === w.theme) || CARD_THEMES[0];
-            const catObj = WISH_CATEGORIES.find((c) => c.id === w.category);
-
-            return (
-              <div
-                key={w.id}
-                className={`rounded-2xl border p-6 bg-gradient-to-br ${theme.bgClass} flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-white/20`}
-              >
-                {/* Header metadata */}
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-4">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${theme.badgeBg}`}>
-                      {catObj ? catObj.label : "Christmas Wish"}
-                    </span>
-                    <span className="text-slate-400 font-mono text-[11px]">
-                      {formatWishTime(w.createdAt || w.timestamp)}
-                    </span>
-                  </div>
-
-                  <blockquote className="font-display text-base sm:text-lg text-slate-100 italic leading-relaxed mb-6">
-                    "{w.message}"
-                  </blockquote>
-                </div>
-
-                {/* Footer metadata & interactive reactions */}
-                <div className="pt-4 border-t border-white/10 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-[11px] text-slate-400">Penned by</div>
-                      <div className="text-sm font-semibold text-white">
-                        {w.name || "Anonymous Friend"}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleShare(w)}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
-                      title="Copy wish quote to share"
-                    >
-                      {copiedId === w.id ? (
-                        <Check className="w-4 h-4 text-emerald-400" />
-                      ) : (
-                        <Share2 className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Reaction Buttons */}
-                  <div className="flex items-center gap-1.5 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => handleReact(w.id, "warmth")}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-white/5 text-xs transition-colors"
-                      title="Send Warmth"
-                    >
-                      <Heart className="w-3.5 h-3.5 text-rose-400" />
-                      <span className="font-mono text-[11px] tabular-nums">
-                        {w.reactions?.warmth || 0}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleReact(w.id, "star")}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/5 text-xs transition-colors"
-                      title="Light a Star"
-                    >
-                      <Star className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="font-mono text-[11px] tabular-nums">
-                        {w.reactions?.star || 0}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleReact(w.id, "cheer")}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 border border-white/5 text-xs transition-colors"
-                      title="Festive Cheer"
-                    >
-                      <span>🎄</span>
-                      <span className="font-mono text-[11px] tabular-nums">
-                        {w.reactions?.cheer || 0}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {/* Responsive Feed Grid using .glass-card styling */}
+      <WishesGrid
+        wishes={filteredWishes}
+        loading={loading}
+        onReact={handleReact}
+      />
     </div>
   );
 }
